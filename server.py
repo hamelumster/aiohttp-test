@@ -136,4 +136,8 @@ app.add_routes([
     web.delete('/api/v1/announcements/{announcement_id:[0-9]+}', AnnouncementView),
 ])
 
-web.run_app(app)
+# Для запуска локально
+# web.run_app(app)
+
+# Для запуска из докер-сети
+web.run_app(app, host='0.0.0.0', port=8081)
