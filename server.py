@@ -98,7 +98,11 @@ class AnnouncementView(web.View):
         json_data = await self.request.json()
         title = json_data["title"]
         description = json_data["description"]
-        announcement = Announcement(title=title, description=description)
+        owner_id = json_data["owner"]
+        owner = await get_user_by_id(owner_id, self.session)
+        announcement = Announcement(title=title,
+                                    description=description,
+                                    owner=owner_id)
         self.session.add(announcement)
         await self.session.commit()
         return web.json_response(announcement.json)
