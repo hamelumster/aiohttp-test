@@ -3,6 +3,7 @@ from aiohttp.web import HTTPNotFound
 import json
 
 from models import init_orm, close_orm, User, Announcement, Session
+from sqlalchemy.ext import IntegrityError
 
 app = web.Application()
 
@@ -37,6 +38,14 @@ async def get_announcement_by_id(announcement_id: int, session) -> Announcement:
     if announcement is None:
         raise generate_error(HTTPNotFound, "Announcement not found")
     return announcement
+
+async def add_user(user: User, session) -> User:
+    try:
+        session.add(user)
+        await session.commit()
+        return user
+    except IntegrityError:
+        raise generate_error(web.HTTPConflict, "User already exists")
 
 
 class UserView(web.View):
