@@ -67,7 +67,12 @@ class UserView(web.View):
         return web.json_response(user.json)
 
     async def post(self):
-        pass
+        json_data = await self.request.json()
+        name = json_data["name"]
+        password = json_data["password"]
+        user = User(name=name, password=password)
+        await add_user(user, self.session)
+        return web.json_response(user.json_id)
 
 
 class AnnouncementView(web.View):
