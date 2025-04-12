@@ -1,5 +1,5 @@
 from aiohttp import web
-from aiohttp.web import HTTPNotFound
+from aiohttp.web import HTTPNotFound, middleware
 import json
 
 from models import init_orm, close_orm, User, Announcement, Session
@@ -14,6 +14,7 @@ async def orm_context(app: web.Application):
     await close_orm()
     print("finish")
 
+@middleware
 async def session_middleware(request: web.Request, handler):
     async with Session() as session:
         request.session = session
@@ -68,9 +69,9 @@ class UserView(web.View):
 
     async def post(self):
         json_data = await self.request.json()
-        name = json_data["name"]
+        username = json_data["username"]
         password = json_data["password"]
-        user = User(name=name, password=password)
+        user = User(username=username, password=password)
         await add_user(user, self.session)
         return web.json_response(user.json_id)
 
@@ -120,6 +121,7 @@ class AnnouncementView(web.View):
 
 
 app.cleanup_ctx.append(orm_context)
+app.middlewares.append(session_middleware)
 
 app.add_routes([
     web.get('/api/v1/users/{user_id:[0-9]+}', UserView),
