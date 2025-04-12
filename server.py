@@ -35,7 +35,12 @@ class AnnouncementView(web.View):
 app.cleanup_ctx.append(orm_context)
 
 app.add_routes([
-    web.post('/hello/world', hello)
+    web.get('/api/v1/users/{user_id:[0-9]+}', UserView),
+    web.post('/api/v1/users', UserView),
+    web.get('/api/v1/announcement/{announcement_id:[0-9]+}', AnnouncementView),
+    web.post('/api/v1/announcement', AnnouncementView),
+    web.patch('/api/v1/announcement/{announcement_id:[0-9]+}', AnnouncementView),
+    web.delete('/api/v1/announcement/{announcement_id:[0-9]+}', AnnouncementView),
 ])
 
 web.run_app(app)
