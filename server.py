@@ -49,9 +49,12 @@ class UserView(web.View):
     def user_id(self):
         return int(self.request.match_info["user_id"])
 
+    async def get_current_user(self):
+        user = await get_user_by_id(self.user_id, self.session)
+        return user
 
     async def get(self):
-        user = await get_user_by_id(self.user_id, self.session)
+        user = await self.get_current_user()
         return web.json_response(user.json)
 
     async def post(self):
