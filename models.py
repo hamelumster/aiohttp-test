@@ -32,8 +32,9 @@ class User(Base):
 
     announcements = relationship("Announcement", back_populates="owner_relationship")
 
+    @property
     def json(self):
-        
+
         return {
             "id": self.id,
             "username": self.username
@@ -50,6 +51,7 @@ class Announcement(Base):
 
     owner_relationship = relationship("User", back_populates="announcements")
 
+    @property
     def json(self):
 
         return {
