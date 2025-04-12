@@ -32,6 +32,13 @@ class User(Base):
 
     announcements = relationship("Announcement", back_populates="owner_relationship")
 
+    def json(self):
+        
+        return {
+            "id": self.id,
+            "username": self.username
+        }
+
 class Announcement(Base):
     __tablename__ = "announcements"
 
@@ -42,6 +49,16 @@ class Announcement(Base):
     owner: Mapped[int] = mapped_column(ForeignKey("users.id"))
 
     owner_relationship = relationship("User", back_populates="announcements")
+
+    def json(self):
+
+        return {
+            "id": self.id,
+            "title": self.title,
+            "description": self.description,
+            "created_at": self.created_at.isoformat(),
+            "owner": self.owner_relationship.json()
+        }
 
 async def init_orm():
     async with engine.begin() as conn:
