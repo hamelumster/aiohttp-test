@@ -40,6 +40,13 @@ class User(Base):
             "username": self.username
         }
 
+    @property
+    def json_id(self):
+
+        return {
+            "id": self.id
+        }
+
 class Announcement(Base):
     __tablename__ = "announcements"
 
