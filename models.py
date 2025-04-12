@@ -15,7 +15,6 @@ DB_PASSWORD = os.getenv("DB_PASSWORD", "secret")
 DB_NAME = os.getenv("DB_NAME", "test_aiohttp")
 
 PG_DSN = f"postgresql+asyncpg://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
-print(repr(PG_DSN))
 
 engine = create_async_engine(PG_DSN)
 Session = async_sessionmaker(engine, expire_on_commit=False)
