@@ -45,9 +45,13 @@ class UserView(web.View):
     def session(self):
         return self.request.session
 
+    @property
+    def user_id(self):
+        return int(self.request.match_info["user_id"])
+
+
     async def get(self):
-        user_id = int(self.request.match_info["user_id"])
-        user = await get_user_by_id(user_id, self.session)
+        user = await get_user_by_id(self.user_id, self.session)
         return web.json_response(user.json)
 
     async def post(self):
@@ -60,17 +64,19 @@ class AnnouncementView(web.View):
     def session(self):
         return self.request.session
 
+    @property
+    def announcement_id(self):
+        return int(self.request.match_info["announcement_id"])
+
     async def get(self):
-        announcement_id = int(self.request.match_info["announcement_id"])
-        announcement = await get_announcement_by_id(announcement_id, self.session)
+        announcement = await get_announcement_by_id(self.announcement_id, self.session)
         return web.json_response(announcement.json)
 
     async def post(self):
         pass
 
     async def delete(self):
-        announcement_id = int(self.request.match_info["announcement_id"])
-        announcement = await get_announcement_by_id(announcement_id, self.session)
+        announcement = await get_announcement_by_id(self.announcement_id, self.session)
         await self.session.delete(announcement)
         await self.session.commit()
         return web.json_response({"status": "ok"})
