@@ -3,7 +3,7 @@ from aiohttp.web import HTTPNotFound
 import json
 
 from models import init_orm, close_orm, User, Announcement, Session
-from sqlalchemy.ext import IntegrityError
+from sqlalchemy.exc import IntegrityError
 
 app = web.Application()
 
