@@ -65,7 +65,7 @@ class Announcement(Base):
             "title": self.title,
             "description": self.description,
             "created_at": self.created_at.isoformat(),
-            "owner": self.owner_relationship.json()
+            "owner": self.owner
         }
 
 async def init_orm():
