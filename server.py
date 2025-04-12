@@ -109,7 +109,15 @@ class AnnouncementView(web.View):
         return web.json_response({"status": "ok"})
 
     async def patch(self):
-        pass
+        announcement = await self.get_current_announcement()
+        json_data = await self.request.json()
+        if "title" in json_data:
+            announcement.title = json_data["title"]
+        if "description" in json_data:
+            announcement.description = json_data["description"]
+        await self.session.commit()
+        return web.json_response(announcement.json)
+
 
 app.cleanup_ctx.append(orm_context)
 
