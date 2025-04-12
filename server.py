@@ -71,15 +71,19 @@ class AnnouncementView(web.View):
     def announcement_id(self):
         return int(self.request.match_info["announcement_id"])
 
-    async def get(self):
+    async def get_current_announcement(self):
         announcement = await get_announcement_by_id(self.announcement_id, self.session)
+        return announcement
+
+    async def get(self):
+        announcement = await self.get_current_announcement()
         return web.json_response(announcement.json)
 
     async def post(self):
         pass
 
     async def delete(self):
-        announcement = await get_announcement_by_id(self.announcement_id, self.session)
+        announcement = await self.get_current_announcement()
         await self.session.delete(announcement)
         await self.session.commit()
         return web.json_response({"status": "ok"})
