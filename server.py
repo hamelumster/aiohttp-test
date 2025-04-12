@@ -2,7 +2,7 @@ from aiohttp import web
 from aiohttp.web import HTTPNotFound
 import json
 
-from models import init_orm, close_orm, User, Announcement
+from models import init_orm, close_orm, User, Announcement, Session
 
 app = web.Application()
 
@@ -35,7 +35,10 @@ async def get_announcement_by_id(announcement_id: int, session) -> Announcement:
 
 class UserView(web.View):
     async def get(self):
-        pass
+        async with Session() as session:
+            user_id = int(self.request.match_info["user_id"])
+            user = await get_user_by_id(user_id, session)
+            return web.json_response(user.json)
 
     async def post(self):
         pass
@@ -43,7 +46,10 @@ class UserView(web.View):
 
 class AnnouncementView(web.View):
     async def get(self):
-        pass
+        async with Session() as session:
+            announcement_id = int(self.request.match_info["announcement_id"])
+            announcement = await get_announcement_by_id(announcement_id, session)
+            return web.json_response(announcement.json)
 
     async def post(self):
         pass
