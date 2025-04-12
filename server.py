@@ -1,6 +1,6 @@
 from aiohttp import web
 
-from models import init_orm, close_orm
+from models import init_orm, close_orm, User, Announcement
 
 app = web.Application()
 
@@ -10,6 +10,15 @@ async def orm_context(app: web.Application):
     yield
     await close_orm()
     print("finish")
+
+async def get_user_by_id(user_id: int, session) -> User:
+    user = await session.get(User, user_id)
+    return user
+
+async def get_announcement_by_id(announcement_id: int, session) -> Announcement:
+    announcement = await session.get(Announcement, announcement_id)
+    return announcement
+
 
 class UserView(web.View):
     async def get(self):
