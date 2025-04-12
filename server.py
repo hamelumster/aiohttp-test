@@ -13,6 +13,12 @@ async def orm_context(app: web.Application):
     await close_orm()
     print("finish")
 
+async def session_middleware(request: web.Request, handler):
+    async with Session() as session:
+        request.session = session
+        response = await handler(request)
+        return response
+
 
 def generate_error(err_cls, message):
     message = json.dumps({"error": message})
@@ -34,28 +40,40 @@ async def get_announcement_by_id(announcement_id: int, session) -> Announcement:
 
 
 class UserView(web.View):
+
+    @property
+    def session(self):
+        return self.request.session
+
     async def get(self):
-        async with Session() as session:
-            user_id = int(self.request.match_info["user_id"])
-            user = await get_user_by_id(user_id, session)
-            return web.json_response(user.json)
+        user_id = int(self.request.match_info["user_id"])
+        user = await get_user_by_id(user_id, self.session)
+        return web.json_response(user.json)
 
     async def post(self):
         pass
 
 
 class AnnouncementView(web.View):
+
+    @property
+    def session(self):
+        return self.request.session
+
     async def get(self):
-        async with Session() as session:
-            announcement_id = int(self.request.match_info["announcement_id"])
-            announcement = await get_announcement_by_id(announcement_id, session)
-            return web.json_response(announcement.json)
+        announcement_id = int(self.request.match_info["announcement_id"])
+        announcement = await get_announcement_by_id(announcement_id, self.session)
+        return web.json_response(announcement.json)
 
     async def post(self):
         pass
 
     async def delete(self):
-        pass
+        announcement_id = int(self.request.match_info["announcement_id"])
+        announcement = await get_announcement_by_id(announcement_id, self.session)
+        await self.session.delete(announcement)
+        await self.session.commit()
+        return web.json_response({"status": "ok"})
 
     async def patch(self):
         pass
