@@ -11,9 +11,26 @@ async def orm_context(app: web.Application):
     await close_orm()
     print("finish")
 
-async def hello(request: web.Request):
-    response = web.json_response({"hello": "world"})
-    return response
+class UserView(web.View):
+    async def get(self):
+        pass
+
+    async def post(self):
+        pass
+
+
+class AnnouncementView(web.View):
+    async def get(self):
+        pass
+
+    async def post(self):
+        pass
+
+    async def delete(self):
+        pass
+
+    async def patch(self):
+        pass
 
 app.cleanup_ctx.append(orm_context)
 
